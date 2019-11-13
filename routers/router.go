@@ -17,6 +17,7 @@ func init() {
 	//beego.Router("/login", &controllers.UserController{},"get:ShowLogin;post:HandleLogin")
 
 	beego.Router("/user/*", &controllers.UserController{})
+	beego.Router("/article/*", &controllers.ArticleController{})
 
 }
 
@@ -24,6 +25,9 @@ func TransparentStatic(c *context.Context) {
 	path := c.Request.URL.Path // /login.html => /static/login.html
 
 	if strings.Index(path, "user") > 0 {
+		return
+	}
+	if strings.Index(path, "article") > 0 {
 		return
 	}
 
