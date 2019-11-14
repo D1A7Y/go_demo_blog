@@ -20,6 +20,18 @@ type ArticleMessage2 struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }
+type ArticleMessage3 struct {
+	Id      int    `json:"id"`
+	Author  string `json:"author"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+type ArticleMessage4 struct {
+	Count     int              `json:"count"`
+	Pagecount int              `json:"pagecount"`
+	Pageindex int              `json:"pageindex"`
+	Article   []models.Article `json:"article"`
+}
 type ArticleID struct {
 	Id int `json:"id"`
 }
@@ -47,6 +59,9 @@ func (c *ArticleController) Get() {
 		break
 	case "/article/look":
 		c.look()
+		break
+	case "/article/delete":
+		c.delete()
 		break
 	}
 }
@@ -88,7 +103,18 @@ func (c *ArticleController) releasePost() {
 	c.ServeJSON()
 }*/
 func (c *ArticleController) modifyPost() {
+	body := c.Ctx.Input.RequestBody
+	am := ArticleMessage3{}
+	rb := ResponseBody{}
+	err := json.Unmarshal(body, &am)
+	if err != nil {
+		logs.Info(err)
+	}
+	articleTime := time.Now().Format("2006-01-02 15:04:05")
+	rb.Message = models.Modify(am.Id, am.Title, am.Content, articleTime)
 
+	c.Data["json"] = &rb
+	c.ServeJSON()
 }
 func (c *ArticleController) lookOne() {
 	//查询某个文章
@@ -121,4 +147,14 @@ func (c *ArticleController) look() {
 	c.Data["json"] = &article
 	c.ServeJSON()
 
+}
+func (c *ArticleController) delete() {
+	rb := ResponseBody{}
+	id, err := c.GetInt("id")
+	if err != nil {
+		logs.Info(err)
+	}
+	rb.Message = models.Delete(id)
+	c.Data["json"] = &rb
+	c.ServeJSON()
 }

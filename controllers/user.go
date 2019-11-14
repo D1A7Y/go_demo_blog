@@ -30,7 +30,6 @@ func (c *UserController) Post() {
 		break
 	}
 }
-
 func (c *UserController) Get() {
 	path := c.Ctx.Request.URL.Path
 	switch path {
@@ -46,6 +45,7 @@ func (c *UserController) loginPost() {
 	rb := ResponseBody{}
 	if err != nil {
 		logs.Info(err)
+		rb.Message = "???"
 	}
 	u, e := models.Login(um.Username, um.Password)
 	if e == "" {
